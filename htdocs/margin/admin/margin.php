@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("admin", "bills", "margins", "stocks"));
 
@@ -65,7 +74,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 
 if ($action == 'remises') {
 	if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', GETPOST('MARGIN_METHODE_FOR_DISCOUNT'), 'chaine', 0, '', $conf->entity) > 0) {
-		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
 	}
@@ -73,7 +82,7 @@ if ($action == 'remises') {
 
 if ($action == 'typemarges') {
 	if (dolibarr_set_const($db, 'MARGIN_TYPE', GETPOST('MARGIN_TYPE'), 'chaine', 0, '', $conf->entity) > 0) {
-		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
 	}
@@ -81,7 +90,7 @@ if ($action == 'typemarges') {
 
 if ($action == 'contact') {
 	if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', GETPOST('AGENT_CONTACT_TYPE'), 'chaine', 0, '', $conf->entity) > 0) {
-		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
 	}
@@ -93,7 +102,7 @@ if ($action == 'contact') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("margesSetup"));
+llxHeader('', $langs->trans("margesSetup"), '', '', 0, 0, '', '', '', 'mod-margin page-admin_margin');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

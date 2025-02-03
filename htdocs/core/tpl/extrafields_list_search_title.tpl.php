@@ -1,10 +1,16 @@
 <?php
 
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+'
+@phan-var-force ?int<0,1> $disablesortlink
+';
 
 if (empty($extrafieldsobjectkey) && is_object($object)) {
 	$extrafieldsobjectkey = $object->table_element;
@@ -22,24 +28,26 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
+				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+					continue;
+				}
+
 				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 				$sortonfield = $extrafieldsobjectprefix.$key;
 				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) {
 					$sortonfield = '';
 				}
-				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
-					print '<th class="liste_titre thseparator"></th>';
-				} else {
-					if (!empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
-						$langs->load($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]);
-					}
 
-					$tooltip = empty($extrafields->attributes[$extrafieldsobjectkey]['help'][$key]) ? '' : $extrafields->attributes[$extrafieldsobjectkey]['help'][$key];
+				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
+					$langs->load($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]);
+				}
 
-					print getTitleFieldOfList($extrafields->attributes[$extrafieldsobjectkey]['label'][$key], 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, 'data-titlekey="'.$key.'"', $sortfield, $sortorder, $cssclass.' ', $disablesortlink, $tooltip)."\n";
-					if (isset($totalarray) && isset($totalarray['nbfield'])) {
-						$totalarray['nbfield']++;
-					}
+				$tooltip = empty($extrafields->attributes[$extrafieldsobjectkey]['help'][$key]) ? '' : $extrafields->attributes[$extrafieldsobjectkey]['help'][$key];
+
+				// Show cell
+				print getTitleFieldOfList($extrafields->attributes[$extrafieldsobjectkey]['label'][$key], 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, 'data-titlekey="'.$key.'"', $sortfield, $sortorder, $cssclass.' ', $disablesortlink, $tooltip)."\n";
+				if (isset($totalarray) && isset($totalarray['nbfield'])) {
+					$totalarray['nbfield']++;
 				}
 			}
 		}
